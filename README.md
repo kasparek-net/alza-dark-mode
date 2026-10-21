@@ -2,48 +2,48 @@
 
 # Alza Dark Mode
 
-Userscript that adds a dark mode to Alza.cz and Alza.sk. It turns on only when the system uses dark appearance, so Alza follows the rest of your Mac, PC or phone.
+Userscript, který přidá tmavý režim na Alza.cz a Alza.sk. Zapne se jen tehdy, když má systém nastavený tmavý vzhled, takže Alza se chová stejně jako zbytek vašeho Macu, PC nebo telefonu.
 
-| Original | Dark mode |
+| Původní | Tmavý režim |
 | --- | --- |
-| ![Product page, original](screenshots/product-light.jpg) | ![Product page, dark mode](screenshots/product-dark.jpg) |
+| ![Detail produktu, původní](screenshots/product-light.jpg) | ![Detail produktu, tmavý režim](screenshots/product-dark.jpg) |
 
-![Buy box in dark mode](screenshots/buy-box-dark.jpg)
+![Cena a tlačítka v tmavém režimu](screenshots/buy-box-dark.jpg)
 
-![Category listing in dark mode](screenshots/category-dark.jpg)
+![Výpis kategorie v tmavém režimu](screenshots/category-dark.jpg)
 
-## Install
+## Instalace
 
-1. Install a userscript manager for your browser:
-   - **Safari** (Mac, iPhone, iPad): [Userscripts](https://apps.apple.com/app/userscripts/id1463298887). Turn the extension on in Safari → Settings → Extensions and allow it on alza.cz (and alza.sk).
-   - **Chrome, Edge, Brave**: [Tampermonkey](https://www.tampermonkey.net/) or [Violentmonkey](https://violentmonkey.github.io/). In Chrome, also open the extension's details (`chrome://extensions`) and turn on **Allow user scripts**, otherwise no script runs.
-   - **Firefox**: [Tampermonkey](https://www.tampermonkey.net/) or [Violentmonkey](https://violentmonkey.github.io/).
-2. Open the script:
+1. Nainstalujte si do prohlížeče správce userscriptů:
+   - **Safari** (Mac, iPhone, iPad): [Userscripts](https://apps.apple.com/app/userscripts/id1463298887). Zapněte rozšíření v Safari → Nastavení → Rozšíření a povolte ho pro alza.cz (případně alza.sk).
+   - **Chrome, Edge, Brave**: [Tampermonkey](https://www.tampermonkey.net/) nebo [Violentmonkey](https://violentmonkey.github.io/). V Chromu navíc otevřete podrobnosti rozšíření (`chrome://extensions`) a zapněte **Povolit uživatelské skripty**, jinak žádný skript nepoběží.
+   - **Firefox**: [Tampermonkey](https://www.tampermonkey.net/) nebo [Violentmonkey](https://violentmonkey.github.io/).
+2. Otevřete skript:
 
    https://raw.githubusercontent.com/kasparek-net/alza-dark-mode/main/alza-dark.user.js
 
-3. Confirm the installation in the dialog your userscript manager shows. In Safari Userscripts, open the extension's popup on that page and click **Install**.
-4. Reload any open Alza tab.
+3. Potvrďte instalaci v okně, které správce userscriptů ukáže. V Safari otevřete na té stránce nabídku rozšíření Userscripts a klikněte na **Install**.
+4. Obnovte otevřené záložky s Alzou.
 
-## Use
+## Používání
 
-- Switch the system to dark appearance (macOS: System Settings → Appearance, Windows: Settings → Personalization → Colors, iOS: Settings → Display & Brightness). Alza turns dark; switching back to light reloads the page in its original colors.
-- To keep Alza light while the system is dark, disable the script in your userscript manager.
+- Přepněte systém na tmavý vzhled (macOS: Nastavení systému → Vzhled, Windows: Nastavení → Přizpůsobení → Barvy, iOS: Nastavení → Zobrazení a jas). Alza ztmavne, po přepnutí zpět na světlý vzhled se stránka znovu načte v původních barvách.
+- Pokud chcete mít Alzu světlou i při tmavém systému, vypněte skript ve správci userscriptů.
 
-## Update
+## Aktualizace
 
-Tampermonkey and Violentmonkey check for new versions automatically. To update right away, open the install link above again. Safari Userscripts checks for new versions periodically and lists them under available updates in the extension's popup, where you confirm the update. Copies installed before version 2.1 don't know where to update from, so reinstall from the link once.
+Tampermonkey a Violentmonkey hledají nové verze samy. Pro okamžitou aktualizaci stačí znovu otevřít odkaz z instalace. Userscripts v Safari nové verze kontroluje průběžně a nabídne je v nabídce rozšíření mezi dostupnými aktualizacemi, kde je potvrdíte. Kopie nainstalované před verzí 2.1 nevědí, odkud se aktualizovat, proto je jednou nainstalujte znovu z odkazu.
 
-## How it works
+## Jak to funguje
 
-Alza has no dark theme, so the script recolors the page after it loads: light backgrounds and borders become dark, dark text and icons become light, and hues are kept so links, prices and badges stay recognizable. Product photos are left untouched. Content that loads later (filters, infinite scrolling, pop-ups) is recolored as it appears.
+Alza tmavý vzhled nemá, takže ho skript dopočítá po načtení stránky: světlá pozadí a rámečky ztmaví, tmavý text a ikony zesvětlí a odstíny zachová, aby odkazy, ceny a štítky zůstaly poznat. Fotky produktů nechává beze změny. Obsah, který se načte později (filtry, nekonečné scrollování, vyskakovací okna), přebarví hned, jak se objeví.
 
-## Known limitations
+## Známá omezení
 
-- A short flash of the light page can appear before the script recolors it.
-- Some images with a white background (product photos, banners) stay white on purpose.
-- If something is unreadable, open an issue with a screenshot and the page URL.
+- Než skript stránku přebarví, může krátce probliknout světlá verze.
+- Některé obrázky s bílým pozadím (fotky produktů, bannery) zůstávají záměrně bílé.
+- Pokud je něco nečitelné, založte issue se screenshotem a adresou stránky.
 
-## Uninstall
+## Odinstalace
 
-Remove **Alza Dark Mode** in your userscript manager's dashboard.
+Odstraňte **Alza Dark Mode** v přehledu skriptů ve správci userscriptů.
