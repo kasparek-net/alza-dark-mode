@@ -18,7 +18,7 @@ Userscript, který přidá tmavý režim na Alza.cz a Alza.sk. Zapne se jen teh
    - **Safari** (Mac, iPhone, iPad): [Userscripts](https://apps.apple.com/app/userscripts/id1463298887). Zapněte rozšíření v Safari → Nastavení → Rozšíření a povolte ho pro alza.cz (případně alza.sk).
    - **Chrome, Edge, Brave**: [Tampermonkey](https://www.tampermonkey.net/) nebo [Violentmonkey](https://violentmonkey.github.io/). V Chromu navíc otevřete podrobnosti rozšíření (`chrome://extensions`) a zapněte **Povolit uživatelské skripty**, jinak žádný skript nepoběží.
    - **Firefox**: [Tampermonkey](https://www.tampermonkey.net/) nebo [Violentmonkey](https://violentmonkey.github.io/).
-2. Otevřete skript:
+2. Otevřete skript na [Greasy Fork](https://greasyfork.org/cs/scripts/601349-alza-dark-mode) a klikněte na **Instalovat tento skript**, nebo ho otevřete přímo z GitHubu:
 
    https://raw.githubusercontent.com/kasparek-net/alza-dark-mode/main/alza-dark.user.js
 
