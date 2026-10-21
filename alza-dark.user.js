@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Alza Dark Mode
 // @description  Dark mode for Alza, follows the system appearance
-// @version      2.2
+// @version      2.3
 // @match        *://*.alza.cz/*
 // @match        *://*.alza.sk/*
 // @run-at       document-start
