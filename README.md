@@ -30,7 +30,7 @@ Userscript that adds a dark mode to Alza.cz and Alza.sk. It turns on only when t
 
 ## Update
 
-Tampermonkey and Violentmonkey check for new versions automatically. To update right away, open the install link above again. In Safari Userscripts, reinstall from the link.
+Tampermonkey and Violentmonkey check for new versions automatically. To update right away, open the install link above again. Safari Userscripts checks for new versions periodically and lists them under available updates in the extension's popup, where you confirm the update. Copies installed before version 2.1 don't know where to update from, so reinstall from the link once.
 
 ## How it works
 
