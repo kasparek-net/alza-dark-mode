@@ -1,7 +1,11 @@
 // ==UserScript==
 // @name         Alza Dark Mode
+// @name:cs      Alza tmavý režim
+// @namespace    https://github.com/kasparek-net
 // @description  Dark mode for Alza, follows the system appearance
-// @version      2.3
+// @description:cs Tmavý režim pro Alzu, řídí se vzhledem systému
+// @version      2.4
+// @license      MIT
 // @match        *://*.alza.cz/*
 // @match        *://*.alza.sk/*
 // @run-at       document-start
