@@ -1,3 +1,5 @@
+<img src="icon.png" alt="" width="128" align="right">
+
 # Alza Dark Mode
 
 Userscript that adds a dark mode to Alza.cz and Alza.sk. It turns on only when the system uses dark appearance, so Alza follows the rest of your Mac, PC or phone.

@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name         Alza Dark Mode
 // @description  Dark mode for Alza, follows the system appearance
-// @version      2.1
+// @version      2.2
 // @match        *://*.alza.cz/*
 // @match        *://*.alza.sk/*
 // @run-at       document-start
 // @grant        none
+// @icon         https://raw.githubusercontent.com/kasparek-net/alza-dark-mode/main/icon.png
 // @homepageURL  https://github.com/kasparek-net/alza-dark-mode
 // @updateURL    https://raw.githubusercontent.com/kasparek-net/alza-dark-mode/main/alza-dark.user.js
 // @downloadURL  https://raw.githubusercontent.com/kasparek-net/alza-dark-mode/main/alza-dark.user.js
