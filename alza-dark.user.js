@@ -6,6 +6,9 @@
 // @match        *://*.alza.sk/*
 // @run-at       document-start
 // @grant        none
+// @homepageURL  https://github.com/kasparek-net/alza-dark-mode
+// @updateURL    https://raw.githubusercontent.com/kasparek-net/alza-dark-mode/main/alza-dark.user.js
+// @downloadURL  https://raw.githubusercontent.com/kasparek-net/alza-dark-mode/main/alza-dark.user.js
 // ==/UserScript==
 
 (function () {
