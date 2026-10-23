@@ -4,7 +4,7 @@
 // @namespace    https://github.com/kasparek-net
 // @description  Dark mode for Alza, follows the system appearance
 // @description:cs Tmavý režim pro Alzu, řídí se vzhledem systému
-// @version      2.4
+// @version      2.5
 // @license      MIT
 // @match        *://*.alza.cz/*
 // @match        *://*.alza.sk/*
@@ -207,7 +207,14 @@
 
   // Returns only the properties not converted yet, so walking the same element twice is cheap.
   function compute(el) {
-    if (el.tagName === "IMG") checkIcon(el);
+    if (el.tagName === "IMG") {
+      // Alza blends product photos with darken/multiply to hide their white background, which blacks them out on dark.
+      if (!el.hasAttribute(MARK) && /darken|multiply/.test(getComputedStyle(el).mixBlendMode) && context(el) !== "light") {
+        el.style.setProperty("mix-blend-mode", "normal", "important");
+        el.setAttribute(MARK, "mix-blend-mode");
+      }
+      checkIcon(el);
+    }
     if (SKIP.has(el.tagName)) return null;
     const done = (el.getAttribute(MARK) || "").split(" ");
     const cs = getComputedStyle(el);
