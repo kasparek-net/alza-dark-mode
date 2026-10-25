@@ -4,7 +4,7 @@
 // @namespace    https://github.com/kasparek-net
 // @description  Dark mode for Alza, follows the system appearance
 // @description:cs Tmavý režim pro Alzu, řídí se vzhledem systému
-// @version      2.7
+// @version      2.8
 // @license      MIT
 // @match        *://*.alza.cz/*
 // @match        *://*.alza.sk/*
@@ -26,6 +26,11 @@
   const MARK = "data-dm";
   const PSEUDO = "data-dmp";
   const HOVER = "data-dmh";
+  const INVERT = "filter: invert(0.9) hue-rotate(180deg) !important;";
+  // Widgets of other extensions and userscripts with their own styles inside a shadow root:
+  // Hlídač shopů (closed, with a canvas chart) and Alza Benefit Prices.
+  const WIDGETS = "div[data-hs], #local-alza-price-tiers";
+  const WIDGET_DIALOG = "local-alza-price-settings";
 
   const style = document.createElement("style");
   style.textContent = `
@@ -35,8 +40,7 @@
     img[src*="eshop-logos"], img[src*="private-labels/img/logo-"], img[src*="promoSection/"] {
       filter: invert(1) hue-rotate(180deg) !important;
     }
-    /* Hlídač shopů renders into a closed shadow root and a canvas, so the whole widget gets inverted. */
-    div[data-hs] { filter: invert(0.9) hue-rotate(180deg) !important; }
+    ${WIDGETS} { ${INVERT} }
   `;
   (document.head || document.documentElement).appendChild(style);
 
@@ -219,7 +223,8 @@
       }
       checkIcon(el);
     }
-    if (SKIP.has(el.tagName)) return null;
+    // Converting the widget host would change the colors its content inherits.
+    if (SKIP.has(el.tagName) || el.matches(WIDGETS)) return null;
     const done = (el.getAttribute(MARK) || "").split(" ");
     const cs = getComputedStyle(el);
     const svg = el instanceof SVGElement;
@@ -306,10 +311,21 @@
     }, now - recheckSince > 3000 ? 0 : 400);
   }
 
+  // The settings host uses display: contents, so its filter has to go on the dialog inside.
+  function invertDialog(host) {
+    if (!host || !host.shadowRoot) return;
+    const css = document.createElement("style");
+    css.textContent = `dialog { ${INVERT} }`;
+    host.shadowRoot.append(css);
+  }
+
   const observer = new MutationObserver((mutations) => {
     for (const m of mutations) {
       if (m.type === "childList") {
-        for (const n of m.addedNodes) if (n.nodeType === 1) schedule(n);
+        for (const n of m.addedNodes) if (n.nodeType === 1) {
+          schedule(n);
+          if (n.id === WIDGET_DIALOG) invertDialog(n);
+        }
       } else if (m.attributeName === "class") {
         const t = m.target;
         reset(t);
@@ -362,6 +378,7 @@
   addEventListener("load", recheck);
 
   function start() {
+    invertDialog(document.getElementById(WIDGET_DIALOG));
     walk(document.body);
     observe();
   }
