@@ -4,7 +4,7 @@
 // @namespace    https://github.com/kasparek-net
 // @description  Dark mode for Alza, follows the system appearance
 // @description:cs Tmavý režim pro Alzu, řídí se vzhledem systému
-// @version      2.8
+// @version      2.9
 // @license      MIT
 // @match        *://*.alza.cz/*
 // @match        *://*.alza.sk/*
@@ -285,6 +285,7 @@
   let queue = new Set();
   let scheduled = false;
   function schedule(el) {
+    if (!el) return;
     queue.add(el);
     if (scheduled) return;
     scheduled = true;
@@ -293,7 +294,12 @@
       queue = new Set();
       scheduled = false;
       observer.disconnect();
-      for (const el of items) if (el.isConnected) walk(el);
+      // While the page is parsing, every new element is queued; walking it inside a queued parent is enough.
+      const nested = (el) => {
+        for (let p = el.parentElement; p; p = p.parentElement) if (items.has(p)) return true;
+        return false;
+      };
+      for (const el of items) if (el.isConnected && !nested(el)) walk(el);
       observe();
     });
   }
@@ -383,6 +389,8 @@
     observe();
   }
 
+  // Converting elements as the parser adds them, before the first paint, avoids a flash of the light page.
+  observe();
   if (document.body) start();
   else document.addEventListener("DOMContentLoaded", start);
 })();
