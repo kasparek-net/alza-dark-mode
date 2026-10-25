@@ -4,7 +4,7 @@
 // @namespace    https://github.com/kasparek-net
 // @description  Dark mode for Alza, follows the system appearance
 // @description:cs Tmavý režim pro Alzu, řídí se vzhledem systému
-// @version      2.11
+// @version      2.12
 // @license      MIT
 // @match        *://*.alza.cz/*
 // @match        *://*.alza.sk/*
@@ -44,6 +44,7 @@
     img[src*="footer/logo/master" i], img[src*="footer/logo/maestro" i], img[src*="footer/logo/kristalova-lupa" i] {
       filter: url(#dm-whiten) !important;
     }
+    img[src*="qr-code" i] { background: #fff !important; padding: 6px !important; border-radius: 8px !important; }
     ${WIDGETS} { ${INVERT} }
   `;
   (document.head || document.documentElement).appendChild(style);
@@ -177,27 +178,31 @@
     ["color", lightIcon],
   ];
 
-  // Small SVG icons loaded as images can't be recolored, so dark ones get inverted.
-  const svgIsDark = new Map();
-  function darkSvg(text) {
+  // SVG icons and logos loaded as images can't be recolored. Dark ones get inverted,
+  // colorful ones with black parts get those parts whitened.
+  const svgKinds = new Map();
+  function svgKind(text) {
     const named = { white: [1, 1, 1], black: [0, 0, 0] };
     const colors = [...text.matchAll(/(?:fill|stroke|stop-color)\s*[:=]\s*"?\s*(#[0-9a-f]{3,8}\b|rgba?\([^)]*\)|white|black)/gi)]
       .map(([, c]) => named[c.toLowerCase()] || (c[0] === "#" ? parseHex(c) : parse(c)))
       .filter(Boolean)
       .map((p) => toHsl(p)[2]);
     // No color means the default black fill. Light parts mean a badge with its own background, left as is.
-    return colors.every((l) => l < 0.45);
+    if (colors.every((l) => l < 0.45)) return "invert";
+    if (colors.some((l) => l < 0.2) && colors.every((l) => l < 0.85)) return "whiten";
+    return null;
   }
+  const SVG_FILTERS = { invert: "invert(1) hue-rotate(180deg)", whiten: "url(#dm-whiten)" };
   function checkIcon(img) {
     const src = img.currentSrc || img.src;
-    if (!/\.svg(\?|$)/i.test(src) || img.hasAttribute(MARK)) return;
+    if (!/\.svg(\?|$)/i.test(src) || /qr-code/i.test(src) || img.hasAttribute(MARK)) return;
     const width = img.getBoundingClientRect().width;
-    if (!width || width > 48 || context(img) !== "converted") return;
-    if (!svgIsDark.has(src))
-      svgIsDark.set(src, fetch(src).then((r) => r.text()).then(darkSvg).catch(() => false));
-    svgIsDark.get(src).then((dark) => {
-      if (!dark || img.hasAttribute(MARK)) return;
-      img.style.setProperty("filter", "invert(1) hue-rotate(180deg)", "important");
+    if (!width || width > 300 || context(img) !== "converted") return;
+    if (!svgKinds.has(src))
+      svgKinds.set(src, fetch(src).then((r) => r.text()).then(svgKind).catch(() => null));
+    svgKinds.get(src).then((kind) => {
+      if (!kind || img.hasAttribute(MARK)) return;
+      img.style.setProperty("filter", SVG_FILTERS[kind], "important");
       img.setAttribute(MARK, "filter");
     });
   }
