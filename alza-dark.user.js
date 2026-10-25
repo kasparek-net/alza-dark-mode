@@ -4,7 +4,7 @@
 // @namespace    https://github.com/kasparek-net
 // @description  Dark mode for Alza, follows the system appearance
 // @description:cs Tmavý režim pro Alzu, řídí se vzhledem systému
-// @version      2.10
+// @version      2.11
 // @license      MIT
 // @match        *://*.alza.cz/*
 // @match        *://*.alza.sk/*
@@ -38,9 +38,11 @@
     body { background: ${BG} !important; color: ${TEXT}; }
     ::placeholder { color: #8a8f94 !important; }
     img[src*="eshop-logos"], img[src*="private-labels/img/logo-"], img[src*="promoSection/"],
-    img[src*="footer/usp/" i], img[src*="footer/logo/visa" i],
-    img[src*="footer/logo/mastercard-obchodnik" i], img[src*="footer/logo/kristalova-lupa" i] {
+    img[src*="footer/usp/" i], img[src*="footer/logo/visa" i] {
       filter: invert(1) hue-rotate(180deg) !important;
+    }
+    img[src*="footer/logo/master" i], img[src*="footer/logo/maestro" i], img[src*="footer/logo/kristalova-lupa" i] {
+      filter: url(#dm-whiten) !important;
     }
     ${WIDGETS} { ${INVERT} }
   `;
@@ -386,7 +388,22 @@
   addEventListener("scroll", recheck, { passive: true });
   addEventListener("load", recheck);
 
+  // Turns black parts of colorful logos white and keeps their colors.
+  function addWhitenFilter() {
+    if (document.getElementById("dm-whiten")) return;
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("style", "position: absolute; width: 0; height: 0");
+    svg.innerHTML = `<filter id="dm-whiten" color-interpolation-filters="sRGB">
+      <feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  -0.333 -0.333 -0.333 0 1" />
+      <feComponentTransfer><feFuncA type="linear" slope="6" intercept="-4.6" /></feComponentTransfer>
+      <feComposite in2="SourceGraphic" operator="in" result="white" />
+      <feMerge><feMergeNode in="SourceGraphic" /><feMergeNode in="white" /></feMerge>
+    </filter>`;
+    document.body.appendChild(svg);
+  }
+
   function start() {
+    addWhitenFilter();
     invertDialog(document.getElementById(WIDGET_DIALOG));
     walk(document.body);
     observe();
