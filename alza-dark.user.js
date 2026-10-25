@@ -4,7 +4,7 @@
 // @namespace    https://github.com/kasparek-net
 // @description  Dark mode for Alza, follows the system appearance
 // @description:cs Tmavý režim pro Alzu, řídí se vzhledem systému
-// @version      2.9
+// @version      2.10
 // @license      MIT
 // @match        *://*.alza.cz/*
 // @match        *://*.alza.sk/*
@@ -37,7 +37,9 @@
     html { color-scheme: dark; background: ${BG} !important; }
     body { background: ${BG} !important; color: ${TEXT}; }
     ::placeholder { color: #8a8f94 !important; }
-    img[src*="eshop-logos"], img[src*="private-labels/img/logo-"], img[src*="promoSection/"] {
+    img[src*="eshop-logos"], img[src*="private-labels/img/logo-"], img[src*="promoSection/"],
+    img[src*="footer/usp/" i], img[src*="footer/logo/visa" i],
+    img[src*="footer/logo/mastercard-obchodnik" i], img[src*="footer/logo/kristalova-lupa" i] {
       filter: invert(1) hue-rotate(180deg) !important;
     }
     ${WIDGETS} { ${INVERT} }
@@ -141,6 +143,7 @@
   // Decorative white fades, as gradients or as images.
   function darkImage(v) {
     if (/sectbgr\.png/.test(v)) return "none";
+    if (/footer-background\.svg/.test(v)) return `linear-gradient(${BG}, ${BG})`;
     if (!v.includes("gradient(")) return null;
     let changed = false;
     const out = v.replace(/rgba?\([^)]*\)/g, (c) => {
