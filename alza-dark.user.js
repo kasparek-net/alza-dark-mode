@@ -4,7 +4,7 @@
 // @namespace    https://github.com/kasparek-net
 // @description  Dark mode for Alza, follows the system appearance
 // @description:cs Tmavý režim pro Alzu, řídí se vzhledem systému
-// @version      2.5
+// @version      2.6
 // @license      MIT
 // @match        *://*.alza.cz/*
 // @match        *://*.alza.sk/*
@@ -25,6 +25,7 @@
   const TEXT = "#e3e3e3";
   const MARK = "data-dm";
   const PSEUDO = "data-dmp";
+  const HOVER = "data-dmh";
 
   const style = document.createElement("style");
   style.textContent = `
@@ -95,13 +96,13 @@
     return result;
   }
 
-  // Light backgrounds become dark, keeping their hue.
-  function darkBg(c) {
+  // Light backgrounds become dark, keeping their hue. Hover ones a bit lighter, so the highlight stays visible.
+  function darkBg(c, el, hover) {
     const p = parse(c);
     if (!p || p[3] === 0) return null;
     const [h, s, l] = toHsl(p);
     if (l < 0.5) return null;
-    return css([h, Math.min(s, 0.5), 0.1 + (1 - l) * 0.3], p[3]);
+    return css([h, Math.min(s, 0.5), 0.1 + (1 - l) * 0.3 + (hover ? 0.08 : 0)], p[3]);
   }
 
   // Dark text becomes light, keeping its hue, unless it sits on a background that stays bright.
@@ -201,12 +202,13 @@
     if (!props) return;
     for (const p of props.split(" ")) el.style.removeProperty(p);
     el.removeAttribute(MARK);
+    el.removeAttribute(HOVER);
   }
 
   const SKIP = new Set(["IMG", "VIDEO", "PICTURE", "SCRIPT", "STYLE", "LINK", "META", "BR"]);
 
   // Returns only the properties not converted yet, so walking the same element twice is cheap.
-  function compute(el) {
+  function compute(el, hover) {
     if (el.tagName === "IMG") {
       // Alza blends product photos with darken/multiply to hide their white background, which blacks them out on dark.
       if (!el.hasAttribute(MARK) && /darken|multiply/.test(getComputedStyle(el).mixBlendMode) && context(el) !== "light") {
@@ -223,7 +225,7 @@
     for (const [prop, fn] of svg ? SVG_RULES : RULES) {
       if (done.includes(prop)) continue;
       if (prop.startsWith("border") && parseFloat(cs.getPropertyValue(prop.replace("color", "width"))) === 0) continue;
-      const v = fn(cs.getPropertyValue(prop), el);
+      const v = fn(cs.getPropertyValue(prop), el, hover);
       if (v) out.push([prop, v]);
     }
     let pseudo = "";
@@ -244,10 +246,13 @@
 
   // Read every style first, then write, so the browser recalculates layout only once.
   function walk(root) {
-    if (root.nodeType !== 1) return;
-    const els = [root, ...root.querySelectorAll("*")];
+    if (root.nodeType === 1) apply([root, ...root.querySelectorAll("*")], false);
+  }
+
+  // Props added while hovered are tagged, so they can be removed once the pointer leaves.
+  function apply(els, hover) {
     contextCache = new Map();
-    const changes = els.map(compute);
+    const changes = els.map((el) => compute(el, hover));
     els.forEach((el, i) => {
       if (!changes[i]) return;
       const { out, pseudo } = changes[i];
@@ -255,8 +260,9 @@
         for (const [prop, v] of out) el.style.setProperty(prop, v, "important");
         const done = el.getAttribute(MARK);
         el.setAttribute(MARK, (done ? done + " " : "") + out.map(([p]) => p).join(" "));
+        if (hover) el.setAttribute(HOVER, ((el.getAttribute(HOVER) || "") + " " + out.map(([p]) => p).join(" ")).trim());
       }
-      if (pseudo) {
+      if (pseudo && !hover) {
         const id = String(++pseudoId);
         el.setAttribute(PSEUDO, id);
         pseudoRules.set(id, pseudo.replace(/::(before|after) \{/g, `[${PSEUDO}="${id}"]::$1 {`));
@@ -320,6 +326,32 @@
       attributeFilter: ["class"],
     });
   }
+
+  // Hover styles change colors without any mutation, and Alza animates them, so jump to the end
+  // of color transitions to read the hover color and to show the converted one without a flash.
+  function settle(els) {
+    for (const el of els)
+      for (const a of el.getAnimations())
+        if (/color|background|border/.test(a.transitionProperty)) a.finish();
+  }
+  function unhover(el) {
+    const props = el.getAttribute(HOVER).split(" ");
+    for (const p of props) el.style.removeProperty(p);
+    const left = (el.getAttribute(MARK) || "").split(" ").filter((p) => p && !props.includes(p));
+    if (left.length) el.setAttribute(MARK, left.join(" "));
+    else el.removeAttribute(MARK);
+    el.removeAttribute(HOVER);
+  }
+  document.addEventListener("mouseover", () => {
+    for (const el of document.querySelectorAll(`[${HOVER}]`)) if (!el.matches(":hover")) unhover(el);
+    const els = [...document.querySelectorAll(":hover")].filter((el) => el !== document.documentElement && el !== document.body);
+    settle(els);
+    apply(els, true);
+    settle(els);
+  }, true);
+  document.addEventListener("mouseout", (e) => {
+    if (!e.relatedTarget) for (const el of document.querySelectorAll(`[${HOVER}]`)) unhover(el);
+  }, true);
 
   document.addEventListener("transitionend", (e) => {
     if (e.target.nodeType === 1 && /color|^all$/.test(e.propertyName)) schedule(e.target);
