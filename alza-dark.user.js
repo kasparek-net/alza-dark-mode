@@ -4,7 +4,7 @@
 // @namespace    https://github.com/kasparek-net
 // @description  Dark mode for Alza, follows the system appearance
 // @description:cs Tmavý režim pro Alzu, řídí se vzhledem systému
-// @version      2.6
+// @version      2.7
 // @license      MIT
 // @match        *://*.alza.cz/*
 // @match        *://*.alza.sk/*
@@ -35,6 +35,8 @@
     img[src*="eshop-logos"], img[src*="private-labels/img/logo-"], img[src*="promoSection/"] {
       filter: invert(1) hue-rotate(180deg) !important;
     }
+    /* Hlídač shopů renders into a closed shadow root and a canvas, so the whole widget gets inverted. */
+    div[data-hs] { filter: invert(0.9) hue-rotate(180deg) !important; }
   `;
   (document.head || document.documentElement).appendChild(style);
 
